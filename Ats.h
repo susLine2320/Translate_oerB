@@ -71,5 +71,6 @@ bool flag;
 bool power;
 int stnum;
 int direction;
+int direction89;
 
 ATS_HANDLES g_output; // èoóÕ

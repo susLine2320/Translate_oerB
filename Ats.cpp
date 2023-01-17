@@ -44,6 +44,7 @@ ATS_API void WINAPI Initialize(int brake)
 {
 	g_speed = 0;
 	p234 = stnum;
+	direction89 = 2;
 }
 
 ATS_API ATS_HANDLES WINAPI Elapse(ATS_VEHICLESTATE vehicleState, int *panel, int *sound)
@@ -193,12 +194,6 @@ ATS_API ATS_HANDLES WINAPI Elapse(ATS_VEHICLESTATE vehicleState, int *panel, int
 	else {
 		panel[100] = 0;
 	}
-	if (p19 == 1 && p20 == 1) {
-		panel[20] = 1;
-	}
-	else {
-		panel[20] = 0;
-	}
 	if (p136 == 1) {//TASC電源
 		panel[136] = 1;
 	}
@@ -223,6 +218,7 @@ ATS_API ATS_HANDLES WINAPI Elapse(ATS_VEHICLESTATE vehicleState, int *panel, int
 	else {
 		panel[234] = 0;
 	}
+	//以下独自仕様
 	if (p166 == 1) {
 		panel[166] = 1;
 	}
@@ -573,7 +569,11 @@ ATS_API void WINAPI SetBeaconData(ATS_BEACONDATA beaconData)
 	if (beaconData.Type == 70) {//次の停車駅を取得
 		stnum = beaconData.Optional;
 	}
-	if (beaconData.Type == 19) {//運転方向を取得
+	if (beaconData.Type == 89) {//運転方向を取得（本仕様）
+		direction89 = 1;
+		direction = beaconData.Optional % 2;
+	}
+	if (beaconData.Type == 19 && direction89 == 2) {//運転方向を取得（バックアップ）
 		direction = beaconData.Optional % 2;
 	}
 }
