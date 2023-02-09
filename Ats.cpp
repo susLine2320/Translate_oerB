@@ -88,7 +88,7 @@ ATS_API ATS_HANDLES WINAPI Elapse(ATS_VEHICLESTATE vehicleState, int *panel, int
 	p97 = panel[97];
 	p98 = panel[98];
 	p99 = panel[99];
-	p100 = panel[100];
+	p100 = panel[127];
 	p136 = panel[136];
 	p137 = panel[137];
 	p138 = panel[138];
@@ -189,10 +189,10 @@ ATS_API ATS_HANDLES WINAPI Elapse(ATS_VEHICLESTATE vehicleState, int *panel, int
 		panel[99] = 0;
 	}
 	if (p100 == 1) {//パターン接近
-		panel[100] = 1;
+		panel[127] = 1;
 	}
 	else {
-		panel[100] = 0;
+		panel[127] = 0;
 	}
 	if (p136 == 1) {//TASC電源
 		panel[136] = 1;
@@ -446,6 +446,10 @@ ATS_API ATS_HANDLES WINAPI Elapse(ATS_VEHICLESTATE vehicleState, int *panel, int
 	else
 	{
 		sound[38] = ATS_SOUND_CONTINUE;
+	}
+	if (p92 != 7) {//小田急キーでない時
+		sound[54] = ATS_SOUND_STOP;
+		sound[55] = ATS_SOUND_STOP;
 	}
     return g_output;
 }
