@@ -25,6 +25,7 @@ int g_reverser; // レバーサ
 bool g_pilotlamp; // パイロットランプ
 int g_time; // 現在時刻
 float g_speed; // 速度計の速度[km/h]
+float g_current; //電流
 int g_deltaT; // フレーム時間[ms/frame]
 bool g_js1a; //メトロ乗降促進ブザーA
 bool g_js1b; //メトロ乗降促進ブザーB
@@ -67,6 +68,10 @@ int p138;
 int p160;
 int p166;
 int p234;
+int oerNotch;//小田急PIの出力P
+int oerBrake;//小田急PIの出力B
+bool UsaoDisable;//うさプラの出力切断
+bool ATSFlag;
 bool flag;
 bool power;
 int stnum;

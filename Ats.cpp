@@ -52,15 +52,21 @@ ATS_API ATS_HANDLES WINAPI Elapse(ATS_VEHICLESTATE vehicleState, int *panel, int
 	g_deltaT = vehicleState.Time - g_time;
 	g_time = vehicleState.Time;
 	g_speed = vehicleState.Speed;
+	g_current = vehicleState.Current;
 
 	// ハンドル出力
-	if(g_brakeNotch != g_emgBrake)
+	if(p92 == 7 && p72 == 0 && panel[101] == 0)//小田急キー、CgSがATSの時で、ATC無信号時
 	{
-		g_output.Brake = g_brakeNotch;
+		g_output.Brake = oerBrake; //小田急PIからの出力Bを使用
+		g_output.Power = oerNotch; //小田急PIからの出力Pを使用
+		sound[0] = ATS_SOUND_STOP; //ATSベルをストップ
 	}
 	else
 	{
-		g_output.Brake = g_brakeNotch;
+		g_output.Brake = g_brakeNotch; //うさプラからの出力Bを使用
+		g_output.Power = g_powerNotch; //うさプラからの出力Pを使用
+		sound[25] = ATS_SOUND_STOP; //ATSベルをストップ
+		sound[21] = ATS_SOUND_STOP; //ATSベルをストップ
 	}
 	if(g_pilotlamp)
 	{
@@ -70,7 +76,6 @@ ATS_API ATS_HANDLES WINAPI Elapse(ATS_VEHICLESTATE vehicleState, int *panel, int
 	{
 		g_output.Reverser = 0;
 	}
-	g_output.Power = g_powerNotch;
 	g_output.ConstantSpeed = ATS_CONSTANTSPEED_CONTINUE;
 
 	//パネル入力
@@ -79,10 +84,10 @@ ATS_API ATS_HANDLES WINAPI Elapse(ATS_VEHICLESTATE vehicleState, int *panel, int
 	p4 = panel[4];
 	p19 = panel[19];
 	p20 = panel[20];
-	p36 = panel[36];
-	p37 = panel[37];
-	p38 = panel[38];
-	p39 = panel[39];
+	//p36 = panel[36];
+	//p37 = panel[37];
+	//p38 = panel[38];
+	//p39 = panel[39];
 	p94 = panel[94];
 	p95 = panel[95];
 	p97 = panel[97];
@@ -94,8 +99,12 @@ ATS_API ATS_HANDLES WINAPI Elapse(ATS_VEHICLESTATE vehicleState, int *panel, int
 	p138 = panel[138];
 	p160 = panel[160];
 
-	// パネル出力
-	if(p92 == 7  && ((p72 == 0) || (p72 == 3) || (p72 == 4))){//マスコンキー小田急、かつATSまたは非設のときにATS表示灯点灯フラグを立てる
+	//サウンド入力
+	oerBrake = sound[238];
+	oerNotch = sound[239];
+
+	// パネル出力（表示灯制御）
+	if(p92 == 7  && (p72 == 0)){//マスコンキー小田急、かつATSのときにATS表示灯点灯フラグを立てる
 		flag = 1;
 	}
 	else {
@@ -225,7 +234,14 @@ ATS_API ATS_HANDLES WINAPI Elapse(ATS_VEHICLESTATE vehicleState, int *panel, int
 	else {
 		panel[166] = 0;
 	}
-
+	//パネル出力（うさプラ代替機能）
+	panel[51] = g_output.Brake == g_emgBrake? 9 : g_output.Brake;
+	panel[52] = g_current < 0 && g_speed > 4.99f ? 1 : 0;
+	panel[53] = g_current < 0 && g_speed > 22.99f ? 1 : 0;
+	panel[54] = g_current < 0 && g_speed > 19.99f ? 1 : 0;
+	panel[55] = g_output.Brake;
+	panel[57] = g_output.Brake;
+	panel[66] = g_output.Power;
 	// サウンド出力
 /*
 	sound[33] = g_js1a;
@@ -248,7 +264,11 @@ ATS_API ATS_HANDLES WINAPI Elapse(ATS_VEHICLESTATE vehicleState, int *panel, int
 	sound[58] = g_jsc7;
 	sound[60] = g_jsc8;
 */
+	//安全上の処理
+	sound[238] = ATS_SOUND_STOP;
+	sound[239] = ATS_SOUND_STOP;
 
+	//乗降促進
 	if(g_js1a == true)
 	{
 		sound[33] = ATS_SOUND_PLAYLOOPING;
