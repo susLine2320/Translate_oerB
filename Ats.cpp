@@ -67,6 +67,9 @@ ATS_API ATS_HANDLES WINAPI Elapse(ATS_VEHICLESTATE vehicleState, int *panel, int
 		g_output.Power = g_powerNotch; //うさプラからの出力Pを使用
 		sound[25] = ATS_SOUND_STOP; //ATSベルをストップ
 		sound[21] = ATS_SOUND_STOP; //ATSベルをストップ
+		if (p160 == 7) {
+			sound[0] = ATS_SOUND_STOP;
+		}
 	}
 	if(g_pilotlamp)
 	{
